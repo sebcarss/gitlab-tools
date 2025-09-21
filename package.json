@@ -1,0 +1,20 @@
+{
+  "name": "gitlab-tools",
+  "version": "1.0.0",
+  "description": "A set of helpful tools for use with Gitlab",
+  "homepage": "https://github.com/sebcarss/gitlab-tools#readme",
+  "bugs": {
+    "url": "https://github.com/sebcarss/gitlab-tools/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sebcarss/gitlab-tools.git"
+  },
+  "license": "ISC",
+  "author": "Seb Carss",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  }
+}
