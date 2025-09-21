@@ -1,5 +1,4 @@
 # GitLab Tools
-
 A collection of Node.js utilities for interacting with GitLab.
 
 ## Features
@@ -21,8 +20,18 @@ npm install
 
 ## Usage
 
+You can use the following npm scripts for development and running the tools:
+
+### Run the main tool
+
 ```bash
 npm start
+```
+
+### Development mode (with auto-reload)
+
+```bash
+npm run dev
 ```
 
 ## Configuration
