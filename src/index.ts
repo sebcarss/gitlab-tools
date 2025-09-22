@@ -46,9 +46,13 @@ function main() {
     const gitlabEndpoint = `${GITLAB_URL}/groups/115863492/projects?include_subgroups=true&per_page=${PER_PAGE}&page=${pageNo}`;
     callApi(gitlabEndpoint, GITLAB_API_TOKEN as string)
         .then(data => {
-            fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
-            console.log(`API response written to ${outputPath}`);
-            console.log(data.headers)
+            const names = Array.isArray(data.data)
+                ? data.data.map((project: any) => project.name_with_namespace)
+                : [];
+            console.log("Project names: ", names);
+            fs.writeFileSync(outputPath, JSON.stringify(names, null, 2));
+            console.log(`API response for page ${pageNo} written to ${outputPath}`);
+            console.log("Next page: ", data.headers['x-next-page']);
         })
         .catch(error => {
             console.error("Error calling API:", error);
