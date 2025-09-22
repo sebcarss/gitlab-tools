@@ -54,15 +54,15 @@ async function main() {
             if (Array.isArray(data.data)) {
                 const projects = data.data.map((project: any) => ({
                     id: project.id,
-                    description: project.description,
                     name: project.name,
                     name_with_namespace: project.name_with_namespace,
+                    created_at: project.created_at,
+                    last_activity_at: project.last_activity_at,
+                    description: project.description,
                     path: project.path,
                     path_with_namespace: project.path_with_namespace,
-                    created_at: project.created_at,
                     topics: Array.isArray(project.topics) ? project.topics.join(';') : '',
-                    web_url: project.web_url,
-                    last_activity_at: project.last_activity_at
+                    web_url: project.web_url
                 }));
                 allProjects.push(...projects);
                 console.log(`Fetched ${projects.length} projects from page ${pageNo}`);
@@ -83,15 +83,15 @@ async function main() {
     // Prepare CSV header and rows
     const headers = [
         "id",
-        "description",
         "name",
         "name_with_namespace",
+        "created_at",
+        "last_activity_at",
+        "description",
         "path",
         "path_with_namespace",
-        "created_at",
         "topics",
-        "web_url",
-        "last_activity_at"
+        "web_url"
     ];
     const csvRows = [
         toCsvRow(headers),
