@@ -25,9 +25,18 @@ async function callApi(endpoint: string, accessToken: string): Promise<any> {
     }
 }
 
+function toCsvRow(fields: any[]): string {
+    return fields.map(field => {
+        if (field === null || field === undefined) return '""';
+        const str = String(field);
+        // Escape double quotes by doubling them
+        return `"${str.replace(/"/g, '""')}"`;
+    }).join(',');
+}
+
 async function main() {
     const outputDir = path.join('./', 'output');
-    const outputPath = path.join(outputDir, 'response.json');
+    const outputPath = path.join(outputDir, 'response.csv');
 
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir);
@@ -35,7 +44,7 @@ async function main() {
 
     const PER_PAGE = 2;
     let pageNo = 1;
-    let allNames: any[] = [];
+    let allProjects: any[] = [];
 
     while (true) {
         const gitlabEndpoint = `${GITLAB_URL}/groups/${GITLAB_GROUP_ID}/projects?include_subgroups=true&per_page=${PER_PAGE}&page=${pageNo}`;
@@ -51,11 +60,11 @@ async function main() {
                     path: project.path,
                     path_with_namespace: project.path_with_namespace,
                     created_at: project.created_at,
-                    topics: project.topics,
+                    topics: Array.isArray(project.topics) ? project.topics.join(';') : '',
                     web_url: project.web_url,
                     last_activity_at: project.last_activity_at
                 }));
-                allNames.push(...projects);
+                allProjects.push(...projects);
                 console.log(`Fetched ${projects.length} projects from page ${pageNo}`);
             }
 
@@ -71,8 +80,26 @@ async function main() {
         }
     }
 
-    fs.writeFileSync(outputPath, JSON.stringify(allNames, null, 2));
-    console.log(`All project names written to ${outputPath}`);
+    // Prepare CSV header and rows
+    const headers = [
+        "id",
+        "description",
+        "name",
+        "name_with_namespace",
+        "path",
+        "path_with_namespace",
+        "created_at",
+        "topics",
+        "web_url",
+        "last_activity_at"
+    ];
+    const csvRows = [
+        toCsvRow(headers),
+        ...allProjects.map(project => toCsvRow(headers.map(h => project[h])))
+    ];
+
+    fs.writeFileSync(outputPath, csvRows.join('\n'), 'utf8');
+    console.log(`All project data written to ${outputPath}`);
 }
 
 main();
