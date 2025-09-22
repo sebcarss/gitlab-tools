@@ -35,7 +35,7 @@ async function main() {
 
     const PER_PAGE = 2;
     let pageNo = 1;
-    let allNames: string[] = [];
+    let allNames: any[] = [];
 
     while (true) {
         const gitlabEndpoint = `${GITLAB_URL}/groups/${GITLAB_GROUP_ID}/projects?include_subgroups=true&per_page=${PER_PAGE}&page=${pageNo}`;
@@ -43,9 +43,20 @@ async function main() {
             const data = await callApi(gitlabEndpoint, GITLAB_API_TOKEN as string);
 
             if (Array.isArray(data.data)) {
-                const names = data.data.map((project: any) => project.name_with_namespace);
-                allNames.push(...names);
-                console.log(`Fetched ${names.length} projects from page ${pageNo}`);
+                const projects = data.data.map((project: any) => ({
+                    id: project.id,
+                    description: project.description,
+                    name: project.name,
+                    name_with_namespace: project.name_with_namespace,
+                    path: project.path,
+                    path_with_namespace: project.path_with_namespace,
+                    created_at: project.created_at,
+                    topics: project.topics,
+                    web_url: project.web_url,
+                    last_activity_at: project.last_activity_at
+                }));
+                allNames.push(...projects);
+                console.log(`Fetched ${projects.length} projects from page ${pageNo}`);
             }
 
             const nextPageHeader = data.headers['x-next-page'];
